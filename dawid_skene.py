@@ -55,9 +55,9 @@ Input:
 def run(responses, tol=0.00001, max_iter=100, init='average'):
     # convert responses to counts
     (patients, observers, classes, counts) = responses_to_counts(responses)
-    print "num Patients:", len(patients)
-    print "Observers:", observers
-    print "Classes:", classes
+    print ("num Patients:", len(patients))
+    print ("Observers:", observers)
+    print ("Classes:", classes)
     
     # initialize
     iter = 0
@@ -67,7 +67,7 @@ def run(responses, tol=0.00001, max_iter=100, init='average'):
 
     patient_classes = initialize(counts)
     
-    print "Iter\tlog-likelihood\tdelta-CM\tdelta-ER"    
+    print ("Iter\tlog-likelihood\tdelta-CM\tdelta-ER")    
     
     # while not converged do:
     while not converged:     
@@ -86,11 +86,11 @@ def run(responses, tol=0.00001, max_iter=100, init='average'):
         if old_class_marginals is not None:
             class_marginals_diff = np.sum(np.abs(class_marginals - old_class_marginals))
             error_rates_diff = np.sum(np.abs(error_rates - old_error_rates))
-            print iter ,'\t', log_L, '\t%.6f\t%.6f' % (class_marginals_diff, error_rates_diff)            
+            print (iter ,'\t', log_L, '\t%.6f\t%.6f' % (class_marginals_diff, error_rates_diff))            
             if (class_marginals_diff < tol and error_rates_diff < tol) or iter > max_iter:
                 converged = True
         else:
-            print iter ,'\t', log_L
+            print (iter ,'\t', log_L)
     
         # update current values
         old_class_marginals = class_marginals
@@ -98,20 +98,20 @@ def run(responses, tol=0.00001, max_iter=100, init='average'):
                 
     # Print final results
     np.set_printoptions(precision=2, suppress=True)
-    print "Class marginals"
-    print class_marginals
-    print "Error rates"
-    print error_rates
+    print ("Class marginals")
+    print (class_marginals)
+    print ("Error rates")
+    print (error_rates)
 
-    print "Incidence-of-error rates"
+    print ("Incidence-of-error rates")
     [nPatients, nObservers, nClasses] = np.shape(counts)
     for k in range(nObservers):
-        print class_marginals * error_rates[k,:,:]
+        print (class_marginals * error_rates[k,:,:])
 
     np.set_printoptions(precision=4, suppress=True)    
-    print "Patient classes"
+    print ("Patient classes")
     for i in range(nPatients):
-        print patients[i], patient_classes[i,:] 
+        print (patients[i], patient_classes[i,:]) 
         
     #return (patients, observers, classes, counts, class_marginals, error_rates, patient_classes) 
  
@@ -127,7 +127,7 @@ Return:
     counts: 3d array of counts: [patients x observers x classes]
 """ 
 def responses_to_counts(responses):
-    patients = responses.keys()
+    patients = list(responses.keys())
     patients.sort()
     nPatients = len(patients)
         
@@ -288,7 +288,7 @@ def calc_likelihood(counts, class_marginals, error_rates):
         temp = log_L + np.log(patient_likelihood)
         
         if np.isnan(temp) or np.isinf(temp):
-            print i, log_L, np.log(patient_likelihood), temp
+            print (i, log_L, np.log(patient_likelihood), temp)
             sys.exit()
 
         log_L = temp        
