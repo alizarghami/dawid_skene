@@ -52,12 +52,12 @@ Input:
     tol: tolerance required for convergence of EM
     max_iter: maximum number of iterations of EM
 """ 
-def run(responses, tol=0.00001, max_iter=100, init='average'):
+def run(responses, tol=0.00001, max_iter=100, init='average', verbose=True):
     # convert responses to counts
     (patients, observers, classes, counts) = responses_to_counts(responses)
-    print ("num Patients:", len(patients))
-    print ("Observers:", observers)
-    print ("Classes:", classes)
+    if verbose: print ("num Patients:", len(patients))
+    if verbose: print ("Observers:", observers)
+    if verbose: print ("Classes:", classes)
     
     # initialize
     iter = 0
@@ -67,7 +67,7 @@ def run(responses, tol=0.00001, max_iter=100, init='average'):
 
     patient_classes = initialize(counts)
     
-    print ("Iter\tlog-likelihood\tdelta-CM\tdelta-ER")    
+    if verbose: print ("Iter\tlog-likelihood\tdelta-CM\tdelta-ER")    
     
     # while not converged do:
     while not converged:     
@@ -86,32 +86,33 @@ def run(responses, tol=0.00001, max_iter=100, init='average'):
         if old_class_marginals is not None:
             class_marginals_diff = np.sum(np.abs(class_marginals - old_class_marginals))
             error_rates_diff = np.sum(np.abs(error_rates - old_error_rates))
-            print (iter ,'\t', log_L, '\t%.6f\t%.6f' % (class_marginals_diff, error_rates_diff))            
+            if verbose: print (iter ,'\t', log_L, '\t%.6f\t%.6f' % (class_marginals_diff, error_rates_diff))            
             if (class_marginals_diff < tol and error_rates_diff < tol) or iter > max_iter:
                 converged = True
         else:
-            print (iter ,'\t', log_L)
+            if verbose: print (iter ,'\t', log_L)
     
         # update current values
         old_class_marginals = class_marginals
         old_error_rates = error_rates
                 
     # Print final results
-    np.set_printoptions(precision=2, suppress=True)
-    print ("Class marginals")
-    print (class_marginals)
-    print ("Error rates")
-    print (error_rates)
+    if verbose:
+        np.set_printoptions(precision=2, suppress=True)
+        print ("Class marginals")
+        print (class_marginals)
+        print ("Error rates")
+        print (error_rates)
 
-    print ("Incidence-of-error rates")
-    [nPatients, nObservers, nClasses] = np.shape(counts)
-    for k in range(nObservers):
-        print (class_marginals * error_rates[k,:,:])
+        print ("Incidence-of-error rates")
+        [nPatients, nObservers, nClasses] = np.shape(counts)
+        for k in range(nObservers):
+            print (class_marginals * error_rates[k,:,:])
 
-    np.set_printoptions(precision=4, suppress=True)    
-    print ("Patient classes")
-    for i in range(nPatients):
-        print (patients[i], patient_classes[i,:]) 
+        np.set_printoptions(precision=4, suppress=True)    
+        print ("Patient classes")
+        for i in range(nPatients):
+            print (patients[i], patient_classes[i,:]) 
         
     return (patients, observers, classes, counts, class_marginals, error_rates, patient_classes) 
  
