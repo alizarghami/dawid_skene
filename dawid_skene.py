@@ -113,7 +113,7 @@ def run(responses, tol=0.00001, max_iter=100, init='average'):
     for i in range(nPatients):
         print (patients[i], patient_classes[i,:]) 
         
-    #return (patients, observers, classes, counts, class_marginals, error_rates, patient_classes) 
+    return (patients, observers, classes, counts, class_marginals, error_rates, patient_classes) 
  
 """
 Function: responses_to_counts()
